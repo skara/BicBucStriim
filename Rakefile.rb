@@ -15,7 +15,7 @@ require 'yaml'
 require 'logger'
 
 APPNAME = 'BicBucStriim'
-VERSION = '1.2.0-alpha'
+VERSION = '1.2.2-a'
 
 SOURCE = "."
 LESS = File.join( SOURCE, "style")
@@ -52,7 +52,7 @@ task :genl10n do |t|
   php << "# Generated file. Please don\'t edit here,\n"
   php << "# edit messages.yml instead. \n"
   php << "#\n"
-  ['de', 'en', 'fr', 'nl'].each do |lang|
+  ['de', 'en', 'fr', 'it', 'nl'].each do |lang|
     php << "$lang#{lang} = array(\n"
     msgs.each do |msg, locs|      
       php << "'#{msg}' => '#{locs[lang]}',\n" unless locs[lang].nil?
@@ -159,7 +159,7 @@ desc "Generate and copy version information file to server"
 task :install_version_info do |t|
   version_info = {
     :version => VERSION,
-    :url => 'http://projekte.textmulch.de/bicbucstriim/downloads/BicBucStriim-1.0.0.zip'
+    :url => 'http://projekte.textmulch.de/bicbucstriim/downloads/BicBucStriim-1.2.0.zip'
   }
   File.open('version.json','w') do |f|
     f.puts version_info.to_json

@@ -20,19 +20,20 @@ require_once 'opds_generator.php';
 require_once 'own_config_middleware.php';
 require_once 'calibre_config_middleware.php';
 require_once 'login_middleware.php';
+require_once 'caching_middleware.php';
 require_once 'mailer.php';
 require_once 'metadata_epub.php';
 
 use dflydev\markdown\MarkdownExtraParser;
 
 # Allowed languages, i.e. languages with translations
-$allowedLangs = array('de','en','fr','nl');
+$allowedLangs = array('de','en','fr','it','nl');
 # Fallback language if the browser prefers other than the allowed languages
 $fallbackLang = 'en';
 # Application Name
 $appname = 'BicBucStriim';
 # App version
-$appversion = '1.2.0-α';
+$appversion = '1.2.2-a';
 
 # Init app and routes
 $app = new \Slim\Slim(array(
@@ -132,6 +133,7 @@ $app->bbs = new BicBucStriim('data/data.db', true);
 $app->add(new \CalibreConfigMiddleware(CALIBRE_DIR));
 $app->add(new \LoginMiddleware($appname, array('js', 'img', 'style')));
 $app->add(new \OwnConfigMiddleware($knownConfigs));
+$app->add(new \CachingMiddleware(array('/admin', '/login')));
 
 ###### Init routes for production
 $app->notFound('myNotFound');
@@ -1049,7 +1051,7 @@ function thumbnail($id) {
 	}
 	if ($has_cover) {
 		$app->response()->status(200);
-		$app->response()->header('Content-type','image/jpeg;base64');
+		$app->response()->header('Content-type','image/png;base64');
 		$app->response()->header('Content-Length',filesize($thumb));
 		readfile($thumb);		
 	} else {
@@ -1687,10 +1689,11 @@ function getFilter() {
 	return new CalibreFilter($lang, $tag);
 }
 
-
+# Initialize the OPDS generator
 function mkOpdsGenerator($app) {
 	global $appversion, $globalSettings;
-	$gen = new OpdsGenerator($app->request()->getRootUri(), $appversion, 
+	$root = rtrim($app->request()->getUrl().$app->request()->getRootUri(), "/");
+	$gen = new OpdsGenerator($root, $appversion, 
 		$app->calibre->calibre_dir,
 		date(DATE_ATOM, $app->calibre->calibre_last_modified),
 		$globalSettings['l10n']);

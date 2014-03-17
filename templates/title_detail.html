@@ -80,7 +80,7 @@
 		<div id="series" data-role="collapsible">
 				<h2>{{page.glob.l10n.series}}</h2>
 				{% for this_series in series %}
-				<a data-role="button" data-icon="info" href="{{page.rot}}/series/{{this_series.id}}/0/">{{ this_series.name }}</a>
+				<a data-role="button" data-icon="info" href="{{page.rot}}/series/{{this_series.id}}/0/">{{ this_series.name }} ({{book.series_index}})</a>
 				{% endfor %} 
 		</div>		
 		{% endif %}
@@ -98,7 +98,7 @@
 			<p>
 				{% for id in ids %}
 					{% if id_templates[id.type] != NULL %}
-						<a data-role="button" data-icon="info" rel="external" href="{{ id_templates[id.type][0]|replace({'%id%': id.val})}}">{{ id_templates[id.type][1] }}</a>
+						<a data-role="button" data-icon="cloud" rel="external" href="{{ id_templates[id.type][0]|replace({'%id%': id.val})}}">{{ id_templates[id.type][1] }}</a>
 					{% endif %}
 				{% endfor %}
 			</p>
